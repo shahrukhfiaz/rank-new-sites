@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: score-loop-to-100
+expected_outcome: |
+  A repeatable score-loop plan: install and set up claude-seo, run its agents and the other checkers, verify findings before fixing, fix, deploy and re-run each round with a scoreboard, and stop only at 100 or at documented ceiling items, never by inventing facts.

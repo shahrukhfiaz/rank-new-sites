@@ -1,0 +1,17 @@
+{
+  "name": "rank-new-sites",
+  "description": "The SEO playbook skill: take any new website from launch to indexed, ranked and cited in AI answers, organic only.",
+  "owner": {
+    "name": "shahrukhfiaz",
+    "url": "https://github.com/shahrukhfiaz"
+  },
+  "plugins": [
+    {
+      "name": "seo-playbook",
+      "source": "./",
+      "description": "Step-by-step SEO playbook: technical foundation, content without doorway risk, a score loop to 100 across claude-seo and other tools, launch pace, Search Console, backlinks and AI search.",
+      "category": "marketing",
+      "tags": ["seo", "search-console", "lighthouse", "geo", "backlinks"]
+    }
+  ]
+}

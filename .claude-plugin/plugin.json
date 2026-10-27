@@ -1,0 +1,13 @@
+{
+  "name": "seo-playbook",
+  "version": "1.0.0",
+  "description": "Step-by-step SEO playbook for taking any new website from launch to indexed, ranked and cited in AI answers, organic only. Includes a score loop for claude-seo and other SEO tools, publishing caps for new domains, Search Console reading, and a catalog of backlink platforms.",
+  "author": {
+    "name": "shahrukhfiaz",
+    "url": "https://github.com/shahrukhfiaz"
+  },
+  "homepage": "https://github.com/shahrukhfiaz/rank-new-sites",
+  "repository": "https://github.com/shahrukhfiaz/rank-new-sites",
+  "license": "MIT",
+  "keywords": ["seo", "search-console", "lighthouse", "geo", "ai-search", "backlinks", "technical-seo", "agent-skills", "claude-code"]
+}

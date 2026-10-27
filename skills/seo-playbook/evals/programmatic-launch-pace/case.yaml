@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: programmatic-launch-pace
+expected_outcome: |
+  A launch plan that caps the launch set and the daily publishing pace on a new domain, requires unique hand-written substance on every indexable city page with an automated check, keeps template-only pages out of the index and out of the sitemap, and judges progress by indexing.

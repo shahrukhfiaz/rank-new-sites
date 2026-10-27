@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: vet-backlink-list
+expected_outcome: |
+  Per-site verdicts that skip every listing that needs a badge or link back (Product Hunt being the one exception), recommend the honest fits for a recipe blog, and explain how to use the people-only communities.
