@@ -74,6 +74,8 @@ Run every SEO tool against the pages, fix what they find, deploy, and run them a
 | Extraction | trafilatura on the built or live HTML | The H1 and the answer come out first; tables and sources survive | Pass |
 | Rich Results Test and Schema Markup Validator | Web | Errors and warnings | 0 |
 | Seobility | Web | On-page, structure, links, speed | 100 |
+| Semrush Site Audit | Web, with an account | Errors, warnings and notices across the whole crawl (Site Health) | 0 errors; every warning fixed or shown to be a false positive |
+| Semrush Backlink Audit | Web, with an account | Referring domains and Semrush's own "toxic" markers | Reported; disavow only on Google's two conditions ([reference G](../references/g-tool-notes.md)) |
 | Search Console and Bing | Reports | Page indexing, rich result reports, manual actions | Only intended reasons; 0 errors |
 
 Use `/seo content-brief` and `/seo flow` when a finding calls for new or rewritten copy. Skip only the tools that cannot apply: local without a real address, ecommerce without products, hreflang with one language.

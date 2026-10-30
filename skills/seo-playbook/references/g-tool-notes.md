@@ -14,6 +14,19 @@ Install and use: [Phase 3](../phases/3-score-loop.md). These notes save the retr
 - **Playwright:** use it for first-screen measurements (is the element above the fold, is there a gap between the header and the next element) and for prefilled signups that a person finishes.
 - **A quality gate and a smoke test** run in CI and fail the build ([reference B](b-quality-gate.md)).
 - **A change ledger:** append-only, holding date, type, URLs, files, baseline and note.
+- **Semrush Site Audit:**
+  - The mega export has one column per check. Join it with the issues export to list the pages behind each failed check.
+  - **Parameter URLs inflate the errors:** each link with a query string becomes a crawled page whose static HTML points its canonical and hreflang at the clean URL. The result is "hreflang conflicts", duplicate markup errors and "only one internal link". Fragments fix all three (A.4).
+  - **"Broken" and 403 external links are often bot blocking.** Government agencies, legislatures and review directories refuse crawler user agents, and some government sites refuse visitors from other countries. Re-test each link with a browser user agent from the target country before touching a correct primary source.
+  - **"Content not optimized"** gives no detail, so there is nothing to verify.
+- **Semrush Backlink Audit:**
+  - **Toxicity is Semrush's own score, not Google's.** Within days of registration a new domain shows up on automated "new domain" list pages: subdomain networks selling links, and WHOIS-list sites. Semrush rates them toxic, but they are random spam that Google's systems ignore.
+  - **Disavow only on Google's two conditions:** a considerable number of spammy, artificial or low-quality links, *and* a manual action (or one likely).
+    - The tool needs a URL-prefix property; it does not support Domain properties.
+    - Keep a prepared file, never uploaded without a manual action.
+    - Send no removal requests to spam operators.
+  - **In Semrush, whitelist the real links.** Moving spam to Semrush's Disavow tab only cleans Semrush's report; never export it to Google.
+  - **The audit doubles as a check on your own records.** It shows listings that went live, or were published, without anyone noting it.
 - **One-off audit sites** (Seobility and similar):
   - Treat their findings as hints, and fix the real ones.
   - Their "response time" is measured from their own country, so a slow figure there can be distance, not the server.

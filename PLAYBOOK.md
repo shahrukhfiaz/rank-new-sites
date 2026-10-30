@@ -211,6 +211,8 @@ Run every SEO tool against the pages, fix what they find, deploy, and run them a
 | Extraction | trafilatura on the built or live HTML | The H1 and the answer come out first; tables and sources survive | Pass |
 | Rich Results Test and Schema Markup Validator | Web | Errors and warnings | 0 |
 | Seobility | Web | On-page, structure, links, speed | 100 |
+| Semrush Site Audit | Web, with an account | Errors, warnings and notices across the whole crawl (Site Health) | 0 errors; every warning fixed or shown to be a false positive |
+| Semrush Backlink Audit | Web, with an account | Referring domains and Semrush's own "toxic" markers | Reported; disavow only on Google's two conditions (reference G) |
 | Search Console and Bing | Reports | Page indexing, rich result reports, manual actions | Only intended reasons; 0 errors |
 
 Use `/seo content-brief` and `/seo flow` when a finding calls for new or rewritten copy. Skip only the tools that cannot apply: local without a real address, ecommerce without products, hreflang with one language.
@@ -416,6 +418,7 @@ Pages sitting at position 80 or worse climb with authority: earned links, brand 
 
 ### A.1 Head and metadata
 - Titles: 60 characters or fewer, unique; the brand suffix only if it fits.
+- **The H1 differs from the title** when a long title drops the brand suffix: keep the title as the search-facing line and give the H1 its own wording (for example a `heading` field in the article's front matter). Semrush flags an H1 identical to the title. A unit test can fail any article, drafts included, that lacks one.
 - Meta descriptions: 70 to 160 characters, unique, carrying the answer (a number beats a promise).
 - Canonical: self-referencing, absolute, the served URL with its trailing-slash form.
 - `og:type article` with published and modified times on articles; a 1200x630 share image with alt text.
@@ -427,17 +430,21 @@ Pages sitting at position 80 or worse climb with authority: earned links, brand 
 - **LocalBusiness**, with the most specific subtype (such as `Plumber`, `Bakery` or `Dentist`), only for a real business at a real, verifiable address, with opening hours and the same name, address and phone as its listings.
 - **Product and Offer** only with a real price and availability; review and rating markup only from real reviews shown on the page.
 - **Dataset** with `distribution` (download links), licence, `temporalCoverage` and `measurementTechnique` on data pages.
-- **SoftwareApplication** for software and free tools; **Service** for service pages.
+- **SoftwareApplication** for software that has real ratings or reviews; **Service** for service pages. Google's Software App markup requires `aggregateRating` or `review`. On a free tool without real reviews, the node is an invalid item in the Rich Results Test, a markup error in Semrush, and earns nothing; let the WebPage node describe the page instead.
 - **ImageObject** for credited photos, with `creditText`, `license`, `acquireLicensePage`, `creator` and `copyrightNotice`. Search Console's image metadata report warns when `copyrightNotice` is missing.
 - **FAQPage** markup is harmless, but Google retired FAQ rich results in May 2026; keep FAQs for readers. HowTo rich results are gone too. Never mark up reviews, ratings or awards that do not exist.
 
 ### A.3 Robots, sitemaps and redirects
-Disallow only private paths; allow the AI crawlers; name the sitemap index. Sitemaps hold only indexable pages, with honest `lastmod`, split per template and staged per batch. One 301 hop from every host variant.
+Disallow only private paths; allow the AI crawlers; name the sitemap index. Use only standard records (`User-agent`, `Allow`, `Disallow`, `Sitemap`): Semrush reports any other line, such as `Content-Signal`, as an invalid robots.txt format, so state such a policy in a `#` comment. Sitemaps hold only indexable pages, with honest `lastmod`, split per template and staged per batch. One 301 hop from every host variant.
 
 ### A.4 Internal links
 - Listing pages link only to published pages; links to pages you noindexed on purpose carry `rel="nofollow"`.
 - Use descriptive anchors that name the target's topic, such as "emergency boiler repair prices", not "click here".
-- Links that prefill a form with query parameters are fine when the target's canonical drops the parameters; Search Console files them under "Alternate page with proper canonical tag".
+- **Prefill and UI-state links use a fragment** (`/quote/#from=10001`), not a query string. Google generally ignores fragments in crawling and indexing. A query creates a crawlable duplicate for every link: the canonical folds it back, but crawlers still fetch it, and audit tools report the duplicate's hreflang and markup as errors. Readers should accept a query string too, for external links, and reload when only the fragment changes on the same page.
+- **Never nofollow your own pages.** A sources list that cites one of the site's own pages renders it as a plain internal link (no nofollow, no new tab).
+- **Cite primary sources with plain links.** A cited statute, agency or standard is a page you vouch for. Keep `nofollow` for competitors, paid placements and user content.
+- **Link every download from at least two pages:** a file linked only from its own page shows as "only one internal link". Link it from a hub too.
+- **Credit links to Wikimedia Commons** use the page-ID URL (`https://commons.wikimedia.org/w/index.php?curid=<id>`, from the Commons API): a `File:…jpg` URL reads to audit tools as an image file linked as a page.
 - No orphan pages; every key page within three clicks of the home page.
 
 ### A.5 Performance levers that reach Lighthouse 100
@@ -447,6 +454,9 @@ Disallow only private paths; allow the AI crawlers; name the sitemap index. Site
 - Inline only small page styles. Measure any "critical CSS" tool: it can add layout shift.
 - Start animations only when they are visible (an IntersectionObserver). Serve AVIF with a WebP fallback, with no fallback image over 200 KB.
 - Every third-party image or embed sits in a box with a fixed size, so it causes no layout shift.
+- **Repeated utility-class strings go into one named utility each** (with Tailwind, `@utility` and `@apply`): footer links, form fields and labels, banner buttons, animation classes. On utility-first sites, class attributes can be half of a page's HTML, and Semrush's "low text to HTML ratio" counts them. Compare screenshots before and after; they should be pixel-identical.
+  - Keep every state colour of a component (invalid, dark, focus) inside the same utility. Split across a utility and a separate class, CSS order instead of the framework's sorting decides which wins.
+  - Never pad pages with text to raise the ratio. It is not a Google signal, and short pages with a full header and footer stay low.
 
 ### A.6 Accessibility that audit tools also check
 - Decorative images are **CSS backgrounds**: some audit tools count `alt=""` as missing. A base map under a drawn overlay carries the description in its alt, with the overlay `aria-hidden`, so screen readers hear it once.
@@ -606,6 +616,19 @@ Install and use: Phase 3. These notes save the retries.
 - **Playwright:** use it for first-screen measurements (is the element above the fold, is there a gap between the header and the next element) and for prefilled signups that a person finishes.
 - **A quality gate and a smoke test** run in CI and fail the build (reference B).
 - **A change ledger:** append-only, holding date, type, URLs, files, baseline and note.
+- **Semrush Site Audit:**
+  - The mega export has one column per check. Join it with the issues export to list the pages behind each failed check.
+  - **Parameter URLs inflate the errors:** each link with a query string becomes a crawled page whose static HTML points its canonical and hreflang at the clean URL. The result is "hreflang conflicts", duplicate markup errors and "only one internal link". Fragments fix all three (A.4).
+  - **"Broken" and 403 external links are often bot blocking.** Government agencies, legislatures and review directories refuse crawler user agents, and some government sites refuse visitors from other countries. Re-test each link with a browser user agent from the target country before touching a correct primary source.
+  - **"Content not optimized"** gives no detail, so there is nothing to verify.
+- **Semrush Backlink Audit:**
+  - **Toxicity is Semrush's own score, not Google's.** Within days of registration a new domain shows up on automated "new domain" list pages: subdomain networks selling links, and WHOIS-list sites. Semrush rates them toxic, but they are random spam that Google's systems ignore.
+  - **Disavow only on Google's two conditions:** a considerable number of spammy, artificial or low-quality links, *and* a manual action (or one likely).
+    - The tool needs a URL-prefix property; it does not support Domain properties.
+    - Keep a prepared file, never uploaded without a manual action.
+    - Send no removal requests to spam operators.
+  - **In Semrush, whitelist the real links.** Moving spam to Semrush's Disavow tab only cleans Semrush's report; never export it to Google.
+  - **The audit doubles as a check on your own records.** It shows listings that went live, or were published, without anyone noting it.
 - **One-off audit sites** (Seobility and similar):
   - Treat their findings as hints, and fix the real ones.
   - Their "response time" is measured from their own country, so a slow figure there can be distance, not the server.
@@ -619,6 +642,9 @@ Install and use: Phase 3. These notes save the retries.
 - **The canonical points at a redirecting URL** → mixed trailing-slash or host forms → build every URL through one helper.
 - **Two templated pages read alike** → template thinking → tie each to its own facts: location, direction, season, audience.
 - **Articles published with stale or wrong facts** → checked only when written → a fresh fact-check on publish day.
+- **Dozens of hreflang errors on a one-language site** → links with query strings made crawlable copies whose HTML carries the clean page's canonical and hreflang → carry those values in the fragment.
+- **"Toxic" backlinks the week after launch** → automated new-domain list pages → ignore them; disavow nothing without a manual action.
+- **A pushed change never went live** → the CI deploy did not run (on a private repository, used-up Actions minutes stop every workflow) → compare the deployed commit with the push, deploy by the documented fallback, and check the Actions billing page.
 - **New articles stay "URL is unknown to Google"** → slow crawling of a new domain and no sitemap re-read → re-submit the sitemap, link the articles from pages that are already crawled, and use Request indexing.
 - **A password appears in a tool's output** → masking keyed on the wrong field → mask every field after the identifier, and rotate the password.
 - **An agent's audit advice breaks extraction** → the advice was never tested → test it with trafilatura before shipping.
