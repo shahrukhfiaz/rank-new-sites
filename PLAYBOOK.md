@@ -438,11 +438,12 @@ Pages sitting at position 80 or worse climb with authority: earned links, brand 
 Disallow only private paths; allow the AI crawlers; name the sitemap index. Use only standard records (`User-agent`, `Allow`, `Disallow`, `Sitemap`): Semrush reports any other line, such as `Content-Signal`, as an invalid robots.txt format, so state such a policy in a `#` comment. Sitemaps hold only indexable pages, with honest `lastmod`, split per template and staged per batch. One 301 hop from every host variant.
 
 ### A.4 Internal links
-- Listing pages link only to published pages; links to pages you noindexed on purpose carry `rel="nofollow"`.
+- **Listing pages link only to indexable pages.** A page you noindexed on purpose (a template hub without its own text) is listed as plain text, not linked. A `rel="nofollow"` internal link is a Semrush warning. A plain link sends audit crawlers into the template pages, whose shared wording can trip the 85% duplicate-content error. Keep the noindex on the page itself.
 - Use descriptive anchors that name the target's topic, such as "emergency boiler repair prices", not "click here".
 - **Prefill and UI-state links use a fragment** (`/quote/#from=10001`), not a query string. Google generally ignores fragments in crawling and indexing. A query creates a crawlable duplicate for every link: the canonical folds it back, but crawlers still fetch it, and audit tools report the duplicate's hreflang and markup as errors. Readers should accept a query string too, for external links, and reload when only the fragment changes on the same page.
 - **Never nofollow your own pages.** A sources list that cites one of the site's own pages renders it as a plain internal link (no nofollow, no new tab).
 - **Cite primary sources with plain links.** A cited statute, agency or standard is a page you vouch for. Keep `nofollow` for competitors, paid placements and user content.
+- **Some sources refuse audit crawlers but serve readers.** Examples: a shipping line that answers bots with 500, a review site that answers them with 404, a rail operator that times out for data-centre addresses, a legislature with a certificate chain only browsers repair. Semrush checks only followed external links: its check count rose about fourfold when citations became followed. Verify each failure from a browser and from a server in the target country. Then fix the links that are really broken, and give `nofollow` to hosts that block crawlers, from one host list that the sources list and the article Markdown plugin share. Re-check links inside tables and headings too; a tree walker that stops at tables misses them.
 - **Link every download from at least two pages:** a file linked only from its own page shows as "only one internal link". Link it from a hub too.
 - **Credit links to Wikimedia Commons** use the page-ID URL (`https://commons.wikimedia.org/w/index.php?curid=<id>`, from the Commons API): a `File:…jpg` URL reads to audit tools as an image file linked as a page.
 - No orphan pages; every key page within three clicks of the home page.
@@ -456,6 +457,18 @@ Disallow only private paths; allow the AI crawlers; name the sitemap index. Use 
 - Every third-party image or embed sits in a box with a fixed size, so it causes no layout shift.
 - **Repeated utility-class strings go into one named utility each** (with Tailwind, `@utility` and `@apply`): footer links, form fields and labels, banner buttons, animation classes. On utility-first sites, class attributes can be half of a page's HTML, and Semrush's "low text to HTML ratio" counts them. Compare screenshots before and after; they should be pixel-identical.
   - Keep every state colour of a component (invalid, dark, focus) inside the same utility. Split across a utility and a separate class, CSS order instead of the framework's sorting decides which wins.
+  - **Icons come from one cached SVG sprite.** Each icon is `<svg class="ic-…"><use href="/sprite.svg#name"/></svg>`, with no paths and no viewBox. A generated base-layer class carries its default width, height, fill and stroke, so call-site utility classes still override them exactly as presentation attributes did. Icons whose paths carry their own classes stay inline, because page CSS does not reach into an external sprite. A test fails when the sprite or the classes drift from the icon definitions.
+  - **A decorative icon repeated in a list** (a hover arrow on 51 links) is the link's `::after`: a CSS mask of the same path in `currentColor`, with the same size, timing and touch-screen rule. That is one rule in the cached stylesheet instead of 51 elements.
+  - **A converter can do the class consolidation in bulk:**
+    1. Rank class strings by total bytes on the pages under target.
+    2. Find each exact literal in the source.
+    3. Keep marker classes (`group`, `peer`, framework hooks such as `hs-*`, classes plain CSS targets) on the element.
+    4. Skip any string that holds a class a script toggles (`hidden`, `invisible`).
+    5. Replace only whole quoted literals.
+
+    Then prove it: every used utility has a definition, a full build passes, and live-against-local screenshots in both themes are identical. When removing unused utilities, check the list against a plain text search before deleting anything.
+  - **Calibrate the threshold.** Semrush's ratio matches visible text bytes over total HTML bytes. On one site every flagged page measured under 10.1% and every unflagged page over 9.9%. Target 11% for a margin.
+  - **Where a hub is all photo tiles,** markup cuts may not be enough. Add real text the tiles do not show, such as each item's one-line summary from data already written and checked.
   - Never pad pages with text to raise the ratio. It is not a Google signal, and short pages with a full header and footer stay low.
 
 ### A.6 Accessibility that audit tools also check
@@ -644,6 +657,8 @@ Install and use: Phase 3. These notes save the retries.
 - **Articles published with stale or wrong facts** → checked only when written → a fresh fact-check on publish day.
 - **Dozens of hreflang errors on a one-language site** → links with query strings made crawlable copies whose HTML carries the clean page's canonical and hreflang → carry those values in the fragment.
 - **"Toxic" backlinks the week after launch** → automated new-domain list pages → ignore them; disavow nothing without a manual action.
+- **Dozens of nofollow internal links on a hub** → links to noindexed template pages carried nofollow → link only indexable pages and list the rest as text.
+- **Hubs stuck under a 10% text ratio** → repeated utility-class strings, inline icon paths and attributes, and photo tiles carrying no text → named utilities, an icon sprite with base-layer defaults, CSS pseudo-element icons, and a summary list from existing data.
 - **A pushed change never went live** → the CI deploy did not run (on a private repository, used-up Actions minutes stop every workflow) → compare the deployed commit with the push, deploy by the documented fallback, and check the Actions billing page.
 - **New articles stay "URL is unknown to Google"** → slow crawling of a new domain and no sitemap re-read → re-submit the sitemap, link the articles from pages that are already crawled, and use Request indexing.
 - **A password appears in a tool's output** → masking keyed on the wrong field → mask every field after the identifier, and rotate the password.
