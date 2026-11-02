@@ -6,6 +6,8 @@
 - Then publish within the caps in [reference C](../references/c-indexing-caps.md). Track each batch in a staged sitemap.
 - The sitemap only ever lists indexable pages, each with `lastmod` taken from its real last content change (1.6). Pages held back stay out of it until they publish.
 
+- **Schedule the queue instead of publishing by hand.** On a static site, give each finished article a future publish date and let the build leave it out until that day (counted in the site's time zone). A small morning job compares the articles due by date with the live sitemap and rebuilds only when one is missing, so a failed morning catches up the next day. A link from one scheduled article to another that is not live yet must render as plain text until the target publishes, or the build's link check fails that morning's deploy. Every scheduled article gets its whole review (fresh fact-check, keyword targets, a claude-seo round, the build checks) before it enters the queue, because nobody looks at it on publish day. Keep the dates inside the caps in [reference C](../references/c-indexing-caps.md), and date seasonal articles ahead of their season.
+
 **Done when:** you can state today's allowance from the publish history, and every publishing session uses it.
 
 ## 4.2 Ask for discovery after each batch
